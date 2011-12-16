@@ -17,3 +17,4 @@ ru:
     products_successfully_published: "Товары успешно опубликованы"
     action_not_selected: "Действие не выбрано"
     products_not_selected: "Не выбрано ни одного продукта"
+    requires_at_least_one_taxon: "Необходим хотя бы один таксон"

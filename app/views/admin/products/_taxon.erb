@@ -1,5 +1,5 @@
-<li>
-  <%= link_to "#{taxon.name} (#{taxon.not_deleted_products_count})", admin_edit_multiple_products_path(:id => taxon.id) %>
+<li id="taxon-<%= taxon.id %>">
+  <%= link_to "#{taxon.name} (#{taxon.not_deleted_products_count})", admin_edit_multiple_products_path(taxon) %>
   <% if taxon.children.any? %>
       <ul><%= render :partial => 'taxon', :collection => taxon.children, :locals => {:current_taxon => current_taxon} %></ul>
   <% end %>

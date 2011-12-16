@@ -1,21 +1,45 @@
 <% content_for :head do %>
-    <%= javascript_include_tag 'jquery.cookie.js', 'jsTree/jquery.jstree.js' %>
+    <%= javascript_include_tag 'jsTree/jquery.jstree.js' %>
     <% javascript_tag do %>
         $(function () {
         $('#per_page').change(function(){
         $('#per_page_form').submit();
         });
 
+        $("#tax-tree").bind("select_node.jstree", function (event, data) {
+        data.rslt.obj.parents('.jstree-closed').each(function () {
+        data.inst.open_node(this);
+        });
+        });
+
         $("#tax-tree").jstree({
+        "plugins" : [ "themes", "html_data", "ui"],
+        "ui" : { "initially_select" : [ "taxon-<%= current_taxon.id %>" ] },
+        "core" : { "initially_open" : [ "taxon-<%= current_taxon.id %>" ] },
         "themes" : {
         "theme" : "apple",
         "url" : "/javascripts/jsTree/themes/apple/style.css"
-
         }
         });
+
         $("#tax-tree a").click(function(){
+        $('#progress').show();
         window.location.href = this.href
         });
+
+        $('#check-all').change(function(e) {
+        if (this.checked) {
+        $('.product-select').each(function() {
+        this.checked = true;
+        });
+        } else {
+        $('.product-select').each(function() {
+        this.checked = false;
+        });
+        }
+
+        });
+
         });
     <% end %>
 <% end %>

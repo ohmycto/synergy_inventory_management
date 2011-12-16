@@ -17,5 +17,6 @@ en:
     products_successfully_published: "Products successfully published"
     action_not_selected: "Action not selected"
     products_not_selected: "Products not selected"
+    requires_at_least_one_taxon: "Requires at least one taxon"
 
 

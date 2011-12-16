@@ -4,15 +4,20 @@ Admin::ProductsController.class_eval do
   def edit_multiple
     session[:im_per_page] = params[:per_page].to_i if !params[:per_page].nil?
     @taxon = params[:id].present? ? Taxon.find(params[:id]) : Taxon.root
-    product_ids = @taxon.self_and_descendants.map { |tax| tax.product_ids }.flatten.uniq
+    product_ids = @taxon.present? ? @taxon.self_and_descendants.map { |tax| tax.product_ids }.flatten.uniq : []
+
     params[:search] ||= {}
     params[:search][:deleted_at_is_null] = "1" if params[:search][:deleted_at_is_null].nil?
     params[:search][:meta_sort] ||= "name.asc"
+
     @search = Product.where(:id => product_ids).metasearch(params[:search])
-    pagination_options = {:per_page => (session[:im_per_page] || 10),
-                          :page => params[:page]}
+    pagination_options = {:per_page => (session[:im_per_page] || 10), :page => params[:page]}
     @collection = @search.relation.group_by_products_id.paginate(pagination_options)
-    respond_with(@collection)
+
+    respond_with(@collection) do |format|
+      format.html
+      format.json { render :json => json_data }
+    end
   end
 
   def update_multiple
@@ -23,7 +28,7 @@ Admin::ProductsController.class_eval do
           @collection.each { |pr| pr.update_attributes(:available_on => nil) }
           flash[:notice] = I18n.t('sim.products_successfully_hidden')
         when 'delete'
-          @collection.each { |pr| pr.update_attributes(:deleted_at => Time.now) }
+          @collection.each { |pr| pr.update_attributes(:deleted_at => Time.zone.now) }
           flash[:notice] = I18n.t('sim.products_successfully_deleted')
         when 'add_taxon'
           tax = Taxon.find params[:products_options][:taxon]
@@ -38,8 +43,11 @@ Admin::ProductsController.class_eval do
     else
       flash[:error] = I18n.t('sim.products_not_selected')
     end
+    respond_with(@collection) do |format|
+      format.html  { redirect_to admin_edit_multiple_products_url(:id => params[:id]) }
+      format.json { render :json => json_data }
+    end
 
-    redirect_to admin_edit_multiple_products_url(:id => params[:id])
   end
 
 
