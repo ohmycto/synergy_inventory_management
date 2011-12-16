@@ -1,0 +1,21 @@
+<% content_for :head do %>
+    <%= javascript_include_tag 'jquery.cookie.js', 'jsTree/jquery.jstree.js' %>
+    <% javascript_tag do %>
+        $(function () {
+        $('#per_page').change(function(){
+        $('#per_page_form').submit();
+        });
+
+        $("#tax-tree").jstree({
+        "themes" : {
+        "theme" : "apple",
+        "url" : "/javascripts/jsTree/themes/apple/style.css"
+
+        }
+        });
+        $("#tax-tree a").click(function(){
+        window.location.href = this.href
+        });
+        });
+    <% end %>
+<% end %>
