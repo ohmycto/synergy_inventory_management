@@ -1,0 +1,2 @@
+$('#product_<%= @object.id%> form a').html('<%= @object.active? ? '●' : '○' %>');
+$('#product_<%= @object.id%> .product_available_on').val('<%= @object.active? ? '' : Time.zone.now.strftime('%Y/%m/%d') %>');

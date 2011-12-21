@@ -1,45 +1,75 @@
 <% content_for :head do %>
     <%= javascript_include_tag 'jsTree/jquery.jstree.js' %>
-    <% javascript_tag do %>
+    <script type="text/javascript">
         $(function () {
-        $('#per_page').change(function(){
-        $('#per_page_form').submit();
-        });
+            $('#per_page').change(function() {
+                $('#per_page_form').submit();
+            });
 
-        $("#tax-tree").bind("select_node.jstree", function (event, data) {
-        data.rslt.obj.parents('.jstree-closed').each(function () {
-        data.inst.open_node(this);
-        });
-        });
+            $("#tax-tree").bind("select_node.jstree", function (event, data) {
+                data.rslt.obj.parents('.jstree-closed').each(function () {
+                    data.inst.open_node(this);
+                });
+            });
 
-        $("#tax-tree").jstree({
-        "plugins" : [ "themes", "html_data", "ui"],
-        "ui" : { "initially_select" : [ "taxon-<%= current_taxon.id %>" ] },
-        "core" : { "initially_open" : [ "taxon-<%= current_taxon.id %>" ] },
-        "themes" : {
-        "theme" : "apple",
-        "url" : "/javascripts/jsTree/themes/apple/style.css"
-        }
-        });
+            $("#tax-tree").jstree({
+                "plugins" : [ "themes", "html_data", "ui"],
+                "ui" : { "initially_select" : [ "taxon-<%= current_taxon.id %>" ] },
+                "core" : { "initially_open" : [ "taxon-<%= current_taxon.id %>" ] },
+                "themes" : {
+                    "theme" : "apple",
+                    "url" : "/javascripts/jsTree/themes/apple/style.css"
+                }
+            });
 
-        $("#tax-tree a").click(function(){
-        $('#progress').show();
-        window.location.href = this.href
-        });
+            $("#tax-tree a").click(function() {
+                $('#progress').show();
+                window.location.href = this.href
+            });
 
-        $('#check-all').change(function(e) {
-        if (this.checked) {
-        $('.product-select').each(function() {
-        this.checked = true;
-        });
-        } else {
-        $('.product-select').each(function() {
-        this.checked = false;
-        });
-        }
+            $('#check-all').change(function(e) {
+                if (this.checked) {
+                    $('.product-select').each(function() {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.product-select').each(function() {
+                        this.checked = false;
+                    });
+                }
 
-        });
+            });
 
+            $('#actions button').click(function() {
+                $('.product-select').clone().appendTo('#product_ids_form');
+                switch ($("input[name='products_action']:checked").val()) {
+                    case 'publish_from':
+                        $('#product_available_on').clone().appendTo('#product_ids_form');
+                        break;
+                    case 'hide':
+                        $('#product_hide').clone().appendTo('#product_ids_form');
+                        break;
+                    case 'add_taxon':
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'product[add_taxon]',
+                            value: $('#product_add_taxon').val()
+                        }).appendTo('#product_ids_form');
+                        break;
+                    case 'delete':
+                        $('#product_ids_form input[name=_method]').val('delete');
+                        break;
+                    default:
+                        alert('Выберите действие');
+                        return false;
+                }
+                $('#actions button').attr("disabled", "true");
+                $('#product_ids_form').submit();
+            });
+
+            $('.change-availability').live('click', function() {
+                $(this).parents('form').submit();
+            });
         });
-    <% end %>
+    </script>
 <% end %>

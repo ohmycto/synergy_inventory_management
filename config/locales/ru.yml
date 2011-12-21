@@ -11,10 +11,7 @@ ru:
     go: "Применить"
     per_page: "Количество на странице"
     has_photo: "С фото"
-    products_successfully_hidden: "Товары успешно скрыты"
+    products_successfully_updated: "Товары успешно обновлены"
     products_successfully_deleted: "Товары успешно удалены"
-    taxon_successfully_added: "Таксон успешно добавлен"
-    products_successfully_published: "Товары успешно опубликованы"
-    action_not_selected: "Действие не выбрано"
-    products_not_selected: "Не выбрано ни одного продукта"
+
     requires_at_least_one_taxon: "Необходим хотя бы один таксон"

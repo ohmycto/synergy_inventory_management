@@ -11,12 +11,8 @@ en:
     go: "Go"
     per_page: "Per page"
     has_photo: "Has photo"
-    products_successfully_hidden: "Products successfully hidden"
+    products_successfully_updated: "Products successfully updated"
     products_successfully_deleted: "Products successfully deleted"
-    taxon_successfully_added: "Taxon successfully added"
-    products_successfully_published: "Products successfully published"
-    action_not_selected: "Action not selected"
-    products_not_selected: "Products not selected"
     requires_at_least_one_taxon: "Requires at least one taxon"
 
 
