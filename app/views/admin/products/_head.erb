@@ -41,6 +41,11 @@
             });
 
             $('#actions button').click(function() {
+                var count = $(".product-select:checked").length;
+                if (!count) {
+                    alert('<%= t('sim.select_products') %>');
+                    return false;
+                }
                 $('.product-select').clone().appendTo('#product_ids_form');
                 switch ($("input[name='products_action']:checked").val()) {
                     case 'publish_from':
@@ -57,10 +62,14 @@
                         }).appendTo('#product_ids_form');
                         break;
                     case 'delete':
+                        var del = confirm("<%= t('sim.confirm_destroy') %>");
+                        if (!del) {
+                            return false
+                        }
                         $('#product_ids_form input[name=_method]').val('delete');
                         break;
                     default:
-                        alert('Выберите действие');
+                        alert('<%= t('sim.select_action') %>');
                         return false;
                 }
                 $('#actions button').attr("disabled", "true");

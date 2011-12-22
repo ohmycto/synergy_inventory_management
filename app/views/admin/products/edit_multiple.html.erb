@@ -18,13 +18,14 @@
       <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
 
       <p><label><%= radio_button_tag 'products_action', 'add_taxon' %><%= t("sim.add_taxon") %></label>
-        <%= select 'product', :add_taxon, options_from_collection_for_select(Taxon.all, :id, :name) %></p>
+        <% options_for_taxon = [] %>
+        <% Taxon.each_with_level { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
+        <%= select 'product', :add_taxon, options_for_taxon.join %></p>
 
       <p><label><%= radio_button_tag 'products_action', 'delete' %><%= t("sim.delete") %></label></p>
       <%= button t("sim.go") %>
     </fieldset>
     <div style='margin: 0 350px 0 350px'>
-
       <table class="index" id='listing_products'>
         <tr>
           <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
@@ -52,7 +53,7 @@
                 |
                 <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product)) unless product.deleted? %>
                 |
-                <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete) unless product.deleted? %>
+                <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy')) unless product.deleted? %>
                 |
                 <%= link_to(image_tag('admin/icons/search.gif'), product) unless product.deleted? %>
               </td>
@@ -70,6 +71,9 @@
 <% else %>
     <p><%= t('sim.requires_at_least_one_taxon') %></p>
 <% end %>
+
+
+
 
 
 

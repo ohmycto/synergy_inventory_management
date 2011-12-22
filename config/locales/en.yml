@@ -14,5 +14,8 @@ en:
     products_successfully_updated: "Products successfully updated"
     products_successfully_deleted: "Products successfully deleted"
     requires_at_least_one_taxon: "Requires at least one taxon"
+    select_action: "Select action"
+    select_products: "Select products"
+    confirm_destroy: "Confirm destroy"
 
 

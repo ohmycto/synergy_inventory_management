@@ -13,5 +13,7 @@ ru:
     has_photo: "С фото"
     products_successfully_updated: "Товары успешно обновлены"
     products_successfully_deleted: "Товары успешно удалены"
-
     requires_at_least_one_taxon: "Необходим хотя бы один таксон"
+    select_action: "Выберите действие"
+    select_products: "Выберите товары"
+    confirm_destroy: "Удалить?"
