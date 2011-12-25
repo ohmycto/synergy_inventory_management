@@ -1,4 +1,5 @@
 <% content_for :head do %>
+    <%= stylesheet_link_tag 'admin/synergy_imi' %>
     <%= javascript_include_tag 'jsTree/jquery.jstree.js' %>
     <script type="text/javascript">
         $(function () {
@@ -40,7 +41,7 @@
 
             });
 
-            $('#actions button').click(function() {
+            $('#products_actions button').click(function() {
                 var count = $(".product-select:checked").length;
                 if (!count) {
                     alert('<%= t('sim.select_products') %>');
@@ -72,7 +73,7 @@
                         alert('<%= t('sim.select_action') %>');
                         return false;
                 }
-                $('#actions button').attr("disabled", "true");
+                $('#products_actions button').attr("disabled", "true");
                 $('#product_ids_form').submit();
             });
 
