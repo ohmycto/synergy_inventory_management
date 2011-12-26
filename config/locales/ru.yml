@@ -1,7 +1,7 @@
 ---
 ru:
   sim:
-    edit_multiple_products: "Массовое редактирование товаров"
+    edit_multiple_products: "Управление номенклатурой"
     with_selected: "С выбранными"
     catalog: "Каталог"
     publish_from: "Опубликовать с"
@@ -10,11 +10,16 @@ ru:
     delete: "Удалить"
     go: "Применить"
     per_page: "Количество на странице"
-    has_photo: "С фото"
+    photo: "Фото"
+    has_photo: "Этот товар имеет изображение"
     products_successfully_updated: "Товары успешно обновлены"
     products_successfully_deleted: "Товары успешно удалены"
     requires_at_least_one_taxon: "Необходим хотя бы один таксон"
     select_action: "Выберите действие"
     select_products: "Выберите товары"
-    confirm_destroy: "Удалить?"
     new_product_here: "Новый товар в эту категорию"
+    confirm_destroy: "Вы действительно хотите удалить выбранные товары?"
+    products_actions: "Действия"
+    published_hide: "Опубликовано (по нажатию - скрыть)"
+    unpublished_show: "Не опубликовано (по нажатию - опубликовать)"
+

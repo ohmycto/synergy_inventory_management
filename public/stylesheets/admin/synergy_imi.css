@@ -1,0 +1,46 @@
+#synergy_imi {
+  margin: 0 0 20px 0;
+}
+
+#synergy_imi #products_taxons {
+  float: left;
+}
+
+#synergy_imi #tax-tree {
+  overflow: auto;
+  width: 200px;  
+}
+
+#synergy_imi #products_list {
+  margin: 28px 300px 0 250px;
+}
+
+#synergy_imi #products_actions {
+  float: right;
+  width: 250px;
+}
+
+#synergy_imi .pagination {
+  padding-top: 0;
+  float: right;
+}
+
+#synergy_imi #per_page_form {
+  float: left;
+}
+
+#synergy_imi table.index td.actions {
+  white-space: nowrap;
+}
+
+#synergy_imi table.index td.has_image {
+  text-align: center;
+}
+
+#synergy_imi .actions a {
+  margin: 0 0 0 5px;
+}
+
+#synergy_imi legend {
+  padding: 0 5px;  
+}

@@ -1,86 +1,95 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
-<h1><%= t("sim.edit_multiple_products") %></h1>
 
-<div id="new_product"></div>
-<p id="ajax_error" class="errorExplanation" style="display:none;"></p>
-<% if @taxon.present? %>
-    <%= render :partial => 'js_head', :locals => {:current_taxon => @taxon} %>
+<div id="synergy_imi">
+  <h1><%= t("sim.edit_multiple_products") %></h1>
 
-    <fieldset style='float:left;width: 300px; height: 400px;'>
-      <legend><%= t("sim.catalog") %></legend>
-      <div id='taxonomy_tree' style=" overflow: auto">
-        <ul><%= render :partial => "taxon", :collection => Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
-      </div>
-    </fieldset>
+  <div id="new_product"></div>
+  <p id="ajax_error" class="errorExplanation" style="display:none;"></p>
+  <% if @taxon.present? %>
 
-    <fieldset style='float:right;width: 300px' id="actions">
-      <legend><%= t("sim.with_selected") %></legend>
-      <p><label><%= radio_button_tag 'products_action', 'publish_from' %><%= t("sim.publish_from") %></label>
-        <%= spree_date_picker 'product', :available_on, {}, :style => 'width:100px' %></p>
+      <%= render :partial => 'js_head', :locals => {:current_taxon => @taxon} %>
 
-      <p><label><%= radio_button_tag 'products_action', 'hide' %><%= t("sim.hide_from_now") %></label></p>
-      <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
+      <fieldset id="products_taxons">
+        <legend><%= t("sim.catalog") %></legend>
+        <div id='taxonomy_tree' style=" overflow: auto">
+          <ul><%= render :partial => "taxon", :collection => Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
+        </div>
+      </fieldset>
 
-      <p><label><%= radio_button_tag 'products_action', 'add_taxon' %><%= t("sim.add_taxon") %></label>
-        <% options_for_taxon = [] %>
-        <% Taxon.each_with_level { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
-        <%= select 'product', :add_taxon, options_for_taxon.join %></p>
+      <fieldset id="products_actions">
+        <legend><%= t("sim.with_selected") %>:</legend>
+        <p><label><%= radio_button_tag 'products_action', 'publish_from' %> <%= t("sim.publish_from") %></label>
+          <%= spree_date_picker 'product', :available_on, {}, :style => 'width:100px' %></p>
 
-      <p><label><%= radio_button_tag 'products_action', 'delete' %><%= t("sim.delete") %></label></p>
-      <%= button t("sim.go") %>
-    </fieldset>
+        <p><label><%= radio_button_tag 'products_action', 'hide' %> <%= t("sim.hide_from_now") %></label></p>
+        <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
 
-    <div style='margin: 0 350px 0 350px'>
+        <p><label><%= radio_button_tag 'products_action', 'add_taxon' %> <%= t("sim.add_taxon") %></label>
+          <% options_for_taxon = [] %>
+          <% Taxon.each_with_level { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
+          <%= select 'product', :add_taxon, options_for_taxon.join %></p>
 
-      <div class='toolbar' style="margin-bottom: 10px">
-        <ul class='actions'>
-          <li id="new_product_link">
-            <%= button_link_to t("sim.new_product_here"), new_object_url("product[add_taxon]" => @taxon.id), {"data-update" => :new_product, :icon => 'add', :id => 'admin_new_product'} %>
-          </li>
-        </ul>
-        <br class='clear'/>
-      </div>
+        <p><label><%= radio_button_tag 'products_action', 'delete' %> <%= t("sim.delete") %></label></p>
+        <%= button t("sim.go") %>
+      </fieldset>
 
-      <table class="index" id='listing_products'>
-        <tr>
-          <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
-          <th><%= t("sku") %></th>
-          <th><%= sort_link @search, :name, t("name") %></th>
-          <th><%= sort_link @search, :master_price, t("master_price") %></th>
-          <th><%= t("sim.has_photo") %></th>
-          <th></th>
-        </tr>
-        <% @collection.each do |product| %>
-            <tr id="<%= dom_id product %>">
-              <td><%= check_box_tag 'product_ids[]', product.id, false, :class => 'product-select' %></td>
-              <td><%= product.sku %></td>
-              <td><%= product.name %></td>
-              <td><%= product.price %></td>
-              <td><%= product.images.any? ? '●' : '○' %></td>
-              <td class="actions">
-                <%- form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
-                    <%= link_to "#{product.active? ? '●' : '○'}", '#', :class => 'change-availability' %>
-                    <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
-                <%- end %>
-                | <%= link_to(image_tag('admin/icons/edit.png'), edit_admin_product_path(product)) unless product.deleted? %>
-                | <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product)) unless product.deleted? %>
-                | <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy')) unless product.deleted? %>
-                | <%= link_to(image_tag('admin/icons/search.gif'), product) unless product.deleted? %>
-              </td>
-            </tr>
+      <div id="products_list">
+        <div class='toolbar' style="margin-bottom: 10px">
+          <ul class='actions'>
+            <li id="new_product_link">
+              <%= button_link_to t("sim.new_product_here"), new_object_url("product[add_taxon]" => @taxon.id), {"data-update" => :new_product, :icon => 'add', :id => 'admin_new_product'} %>
+            </li>
+          </ul>
+          <br class='clear'/>
+        </div>
+
+        <table class="index" id="listing_products">
+          <tr>
+            <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
+            <th><%= t("sku") %></th>
+            <th><%= sort_link @search, :name, t("name") %></th>
+            <th><%= sort_link @search, :master_price, t("master_price") %></th>
+            <th><%= t("sim.photo") %></th>
+            <th></th>
+          </tr>
+          <% @collection.each do |product| %>
+              <tr id="<%= dom_id product %>">
+                <td><%= check_box_tag 'product_ids[]', product.id, false, :class => 'product-select' %></td>
+                <td><%= product.sku %></td>
+                <td><%= product.name %></td>
+                <td><%= product.price %></td>
+                <td class="has_image"><%= product.images.any? ? image_tag('admin/icons/camera.png', :title => t("sim.has_photo")) : '' %></td>
+                <td class="actions">
+                  <%- form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
+                      <% if product.active? %>
+                          <%= link_to (image_tag('admin/icons/light-bulb.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.published_hide")) %>
+                      <% else %>
+                          <%= link_to (image_tag('admin/icons/light-bulb-off.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.unpublished_show")) %>
+                      <% end %>
+                      <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
+                  <%- end %>
+
+                  <%= link_to(image_tag('admin/icons/edit.png'), edit_admin_product_path(product), :title => t(:edit)) unless product.deleted? %>
+                  <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product), :title => t(:clone)) unless product.deleted? %>
+                  <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy'), :title => t(:delete)) unless product.deleted? %>
+                  <%= link_to(image_tag('admin/icons/search.gif'), product, :title => t("preview"), :target => "_blank") unless product.deleted? %>
+
+                </td>
+              </tr>
+          <% end %>
+        </table>
+        <% form_tag admin_edit_multiple_products_path(@taxon), :id => 'product_ids_form', :method => :put, :style => "display:none" do %>
         <% end %>
-      </table>
-      <% form_tag admin_edit_multiple_products_path(@taxon), :id => 'product_ids_form', :method => :put, :style => "display:none" do %>
-      <% end %>
-      <%= will_paginate(@collection, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
-      <% form_tag '', :method => :get, :id => 'per_page_form' do %>
-          <%= label_tag 'per_page', t('sim.per_page') %>
-          <%= select_tag 'per_page', options_for_select([["10"], ["50"], ["100"], ['All', "10000"]], session[:im_per_page].to_s) %>
-      <% end %>
-    </div>
-<% else %>
-    <p><%= t('sim.requires_at_least_one_taxon') %></p>
-<% end %>
+        <%= will_paginate(@collection, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+        <% form_tag '', :method => :get, :id => 'per_page_form' do %>
+            <%= label_tag 'per_page', t('sim.per_page') %>
+            <%= select_tag 'per_page', options_for_select([["10"], ["50"], ["100"], [t(:all), "10000"]], session[:im_per_page].to_s) %>
+        <% end %>
+      </div>
+  <% else %>
+      <p><%= t('sim.requires_at_least_one_taxon') %></p>
+  <% end %>
+</div>
 
 
 
