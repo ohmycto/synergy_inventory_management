@@ -17,5 +17,6 @@ en:
     select_action: "Select action"
     select_products: "Select products"
     confirm_destroy: "Confirm destroy"
+    new_product_here: "New prodict in this category"
 
 

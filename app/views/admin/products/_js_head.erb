@@ -1,0 +1,294 @@
+<% content_for :head do %>
+    <%= javascript_include_tag 'jquery.cookie.js', 'jsTree/jquery.jstree.js' %>
+
+    <script type="text/javascript">
+
+        var taxonomy_id = '<%= current_taxon.root.taxonomy_id %>';
+        var loading = '<%= escape_javascript t('loading') %>';
+        var new_taxon = '<%=escape_javascript t('new_taxon') %>';
+        var server_error = '<%=escape_javascript t('server_error') %>';
+        var taxonomy_tree_error = '<%=escape_javascript t('taxonomy_tree_error') %>';
+        var is_cut = false;
+        var last_rollback = null;
+
+        var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown) {
+            jQuery.jstree.rollback(last_rollback);
+            jQuery("#ajax_error").show().html("<strong>" + server_error + "</strong><br/>" + taxonomy_tree_error);
+        };
+
+        var node_taxonomy = function (node) {
+            return node.attr('data-taxonomy') || node.parents('li[rel="root"]').attr('data-taxonomy');
+        }
+
+        var handle_move = function(e, data) {
+            last_rollback = data.rlbk;
+            var position = data.rslt.cp;
+            var node = data.rslt.o;
+            var new_parent = data.rslt.np;
+            var old_parent = data.rslt.op;
+
+            jQuery.ajax({
+                type: "POST",
+                dataType: "json",
+                //url: "/admin/taxonomies/" + node.attr('data-taxonomy') + "/taxons/" + node.attr("id"),
+                url: "/admin/taxonomies/" + node_taxonomy(old_parent) + "/taxons/" + node.attr("id"),
+                data: ({_method: "put", "taxon[taxonomy_id]": node_taxonomy(new_parent),"taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
+                error: handle_ajax_error
+            });
+
+            return true
+        };
+
+        var handle_create = function(e, data) {
+            last_rollback = data.rlbk;
+            var node = data.rslt.obj;
+            var name = data.rslt.name;
+            var position = data.rslt.position;
+            var new_parent = data.rslt.parent;
+
+            jQuery.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/admin/taxonomies/" + node_taxonomy(new_parent) + "/taxons/",
+                data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[position]": position, authenticity_token: AUTH_TOKEN}),
+                error: handle_ajax_error,
+                success: function(data, result) {
+                    node.attr('id', data.taxon.id);
+                }
+            });
+        };
+
+        var handle_rename = function(e, data) {
+            last_rollback = data.rlbk;
+            var node = data.rslt.obj;
+            var name = data.rslt.new_name;
+
+            jQuery.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/admin/taxonomies/" + node_taxonomy(node) + "/taxons/" + node.attr("id"),
+                data: ({_method: "put", "taxon[name]": name, authenticity_token: AUTH_TOKEN}),
+                error: handle_ajax_error
+            });
+        };
+
+        var handle_delete = function(e, data) {
+            last_rollback = data.rlbk;
+            var node = data.rslt.obj;
+
+
+
+            jConfirm('Are you sure you want to delete this taxon?', 'Confirm Taxon Deletion', function(r) {
+                if (r) {
+                    jQuery.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/admin/taxonomies/0/taxons/" + node.attr("id"),
+                        data: ({_method: "delete", authenticity_token: AUTH_TOKEN}),
+                        error: handle_ajax_error
+                    });
+                } else {
+                    jQuery.jstree.rollback(last_rollback);
+                    last_rollback = null;
+                }
+            });
+        };
+
+
+        var handle_select = function (event, data) {
+            data.rslt.obj.parents('.jstree-closed').each(function () {
+                data.inst.open_node(this);
+            });
+        };
+
+        jQuery(document).ready(function() {
+
+
+            var conf = {
+                "ui" : { "initially_select" : [ "<%= current_taxon.id %>" ] },
+                "core" : { "initially_open" : [ "<%= current_taxon.id %>" ] },
+                "themes" : {
+                    "theme" : "apple",
+                    "url" : "/javascripts/jsTree/themes/apple/style.css"
+                },
+                "strings" : {
+                    "new_node" : new_taxon,
+                    "loading" : loading + "..."
+                },
+                "crrm" : {
+                    "move" : {
+                        "check_move" : function (m) {
+                            var position = m.cp;
+                            var node = m.o;
+                            var new_parent = m.np;
+
+                            if (!new_parent) return false; //no parent
+                            if (node.attr("rel") == "root") return false; //can't drag root
+                            if (new_parent.attr("id") == "taxonomy_tree") return false;
+                            return true;
+                        }
+                    }
+                },
+                "contextmenu" : {
+                    "items" : function(obj) {
+                        var id_of_node = obj.attr("id");
+                        var type_of_node = obj.attr("rel");
+                        var menu = {};
+                        if (type_of_node == "root") {
+                            menu = {
+                                "create" : {
+                                    "label"            : "Create",
+                                    "action"           : function (obj) {
+                                        this.create(obj);
+                                    }
+                                },
+                                "paste" : {
+                                    "separator_before" : true,
+                                    "label"            : "Paste",
+                                    "action"           : function (obj) {
+                                        is_cut = false;
+                                        this.paste(obj);
+                                    },
+                                    "_disabled"        : is_cut == false
+                                },
+                                "edit" : {
+                                    "separator_before" : true,
+                                    "label"            : "Edit",
+                                    "action"           : function (obj) {
+                                        window.location = "/admin/taxonomies/" + node_taxonomy(obj) + "/taxons/" + obj.attr("id") + "/edit/";
+
+                                    }
+                                }
+                            }
+                        } else {
+                            menu = {
+                                "create" : {
+                                    "label"            : "Create",
+                                    "action"           : function (obj) {
+                                        this.create(obj);
+                                    }
+                                },
+                                "rename" : {
+                                    "label"            : "Rename",
+                                    "action"           : function (obj) {
+                                        this.rename(obj);
+                                    }
+                                },
+                                "remove" : {
+                                    "label"            : "Remove",
+                                    "action"           : function (obj) {
+                                        this.remove(obj);
+                                    }
+                                },
+                                "cut" : {
+                                    "separator_before" : true,
+                                    "label"            : "Cut",
+                                    "action"           : function (obj) {
+                                        is_cut = true;
+                                        this.cut(obj);
+                                    }
+                                },
+                                "paste" : {
+                                    "label"            : "Paste",
+                                    "action"           : function (obj) {
+                                        is_cut = false;
+                                        this.paste(obj);
+                                    },
+                                    "_disabled"        : is_cut == false
+                                },
+                                "edit" : {
+                                    "separator_before" : true,
+                                    "label"            : "Edit",
+                                    "action"           : function (obj) {
+                                        window.location = "/admin/taxonomies/" + node_taxonomy(obj) + "/taxons/" + obj.attr("id") + "/edit/";
+                                    }
+                                }
+                            }
+                        }
+                        return menu;
+                    }
+                },
+
+                "plugins" : [ "themes", "json_data", "html_data", "dnd", "crrm", "contextmenu", "ui"]
+            };
+
+            jQuery("#taxonomy_tree").jstree(conf)
+                    .bind("select_node.jstree", handle_select)
+                    .bind("move_node.jstree", handle_move)
+                    .bind("remove.jstree", handle_delete)
+                    .bind("create.jstree", handle_create)
+                    .bind("rename.jstree", handle_rename);
+
+
+            $("#taxonomy_tree a").click(function() {
+                $('#progress').show();
+                window.location.href = this.href
+            });
+
+
+            jQuery(document).keypress(function(e) {
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                }
+            });
+
+            $('#check-all').change(function(e) {
+                if (this.checked) {
+                    $('.product-select').each(function() {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.product-select').each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
+
+            $('#actions button').click(function() {
+                var count = $(".product-select:checked").length;
+                if (!count) {
+                    alert('<%= t('sim.select_products') %>');
+                    return false;
+                }
+                $('.product-select').clone().appendTo('#product_ids_form');
+                switch ($("input[name='products_action']:checked").val()) {
+                    case 'publish_from':
+                        $('#product_available_on').clone().appendTo('#product_ids_form');
+                        break;
+                    case 'hide':
+                        $('#product_hide').clone().appendTo('#product_ids_form');
+                        break;
+                    case 'add_taxon':
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'product[add_taxon]',
+                            value: $('#product_add_taxon').val()
+                        }).appendTo('#product_ids_form');
+                        break;
+                    case 'delete':
+                        var del = confirm("<%= t('sim.confirm_destroy') %>");
+                        if (!del) {
+                            return false
+                        }
+                        $('#product_ids_form input[name=_method]').val('delete');
+                        break;
+                    default:
+                        alert('<%= t('sim.select_action') %>');
+                        return false;
+                }
+                $('#actions button').attr("disabled", "true");
+                $('#product_ids_form').submit();
+            });
+
+            $('.change-availability').live('click', function() {
+                $(this).parents('form').submit();
+            });
+
+            $('#per_page').change(function() {
+                $('#per_page_form').submit();
+            });
+        });
+
+    </script>
+
+<% end %>

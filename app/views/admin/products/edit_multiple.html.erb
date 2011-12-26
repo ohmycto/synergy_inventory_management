@@ -1,10 +1,14 @@
 <%= render :partial => 'admin/shared/product_sub_menu' %>
 <h1><%= t("sim.edit_multiple_products") %></h1>
+
+<div id="new_product"></div>
+<p id="ajax_error" class="errorExplanation" style="display:none;"></p>
 <% if @taxon.present? %>
-    <%= render :partial => 'head', :locals => {:current_taxon => @taxon} %>
+    <%= render :partial => 'js_head', :locals => {:current_taxon => @taxon} %>
+
     <fieldset style='float:left;width: 300px; height: 400px;'>
       <legend><%= t("sim.catalog") %></legend>
-      <div id='tax-tree' style=" overflow: auto">
+      <div id='taxonomy_tree' style=" overflow: auto">
         <ul><%= render :partial => "taxon", :collection => Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
       </div>
     </fieldset>
@@ -25,7 +29,18 @@
       <p><label><%= radio_button_tag 'products_action', 'delete' %><%= t("sim.delete") %></label></p>
       <%= button t("sim.go") %>
     </fieldset>
+
     <div style='margin: 0 350px 0 350px'>
+
+      <div class='toolbar' style="margin-bottom: 10px">
+        <ul class='actions'>
+          <li id="new_product_link">
+            <%= button_link_to t("sim.new_product_here"), new_object_url("product[add_taxon]" => @taxon.id), {"data-update" => :new_product, :icon => 'add', :id => 'admin_new_product'} %>
+          </li>
+        </ul>
+        <br class='clear'/>
+      </div>
+
       <table class="index" id='listing_products'>
         <tr>
           <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
@@ -47,15 +62,10 @@
                     <%= link_to "#{product.active? ? '●' : '○'}", '#', :class => 'change-availability' %>
                     <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
                 <%- end %>
-
-                |
-                <%= link_to(image_tag('admin/icons/edit.png'), edit_admin_product_path(product)) unless product.deleted? %>
-                |
-                <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product)) unless product.deleted? %>
-                |
-                <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy')) unless product.deleted? %>
-                |
-                <%= link_to(image_tag('admin/icons/search.gif'), product) unless product.deleted? %>
+                | <%= link_to(image_tag('admin/icons/edit.png'), edit_admin_product_path(product)) unless product.deleted? %>
+                | <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product)) unless product.deleted? %>
+                | <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy')) unless product.deleted? %>
+                | <%= link_to(image_tag('admin/icons/search.gif'), product) unless product.deleted? %>
               </td>
             </tr>
         <% end %>

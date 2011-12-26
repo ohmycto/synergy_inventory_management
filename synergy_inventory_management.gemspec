@@ -5,10 +5,10 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = "synergy_inventory_management"
-  s.version     = '0.1'
-  s.authors     = 'serge'
+  s.version     = '0.2'
+  s.authors     = 'Sergey Chazov (Service & Consulting)'
   s.email       = 'service@secoint.ru'
-  s.homepage    = ""
+  s.homepage    = "https://github.com/secoint/synergy_inventory_management"
   s.summary     = 'Manage inventory'
   s.description = 'Manage inventory'
 

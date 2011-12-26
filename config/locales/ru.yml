@@ -17,3 +17,4 @@ ru:
     select_action: "Выберите действие"
     select_products: "Выберите товары"
     confirm_destroy: "Удалить?"
+    new_product_here: "Новый товар в эту категорию"

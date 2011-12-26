@@ -1,4 +1,7 @@
 Product.class_eval do
+  attr_accessor :add_taxon
+  after_save :add_taxon_save
+
   def active?
     self.deleted_at.nil? and available?
   end
@@ -7,8 +10,10 @@ Product.class_eval do
     available_on.nil? ? false : available_on < Time.zone.now
   end
 
-  def add_taxon=(taxon_id)
-    tax = Taxon.find(taxon_id)
-    self.taxons << tax if !self.taxons.include? tax
+  def add_taxon_save
+    return true unless add_taxon.present?
+    taxon = Taxon.find(add_taxon)
+    self.taxons << taxon if !self.taxons.include? taxon
+    true
   end
 end
