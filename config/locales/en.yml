@@ -17,7 +17,7 @@ en:
     requires_at_least_one_taxon: "Requires at least one taxon"
     select_action: "Select action"
     select_products: "Select products"
-    new_product_here: "New prodict in this category"
+    new_product_here: "New product in this category"
     confirm_destroy: "Do you really want to delete chosen products?"
     products_actions: "Actions"
     published_hide: "Published (hide on click)"

@@ -17,7 +17,7 @@ ru:
     requires_at_least_one_taxon: "Необходим хотя бы один таксон"
     select_action: "Выберите действие"
     select_products: "Выберите товары"
-    new_product_here: "Новый товар в эту категорию"
+    new_product_here: "Новый товар в этой категории"
     confirm_destroy: "Вы действительно хотите удалить выбранные товары?"
     products_actions: "Действия"
     published_hide: "Опубликовано (по нажатию - скрыть)"
