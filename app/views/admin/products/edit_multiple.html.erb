@@ -19,7 +19,7 @@
       <fieldset id="products_actions">
         <legend><%= t("sim.with_selected") %>:</legend>
         <p><label><%= radio_button_tag 'products_action', 'publish_from' %> <%= t("sim.publish_from") %></label>
-          <%= spree_date_picker 'product', :available_on, {}, :style => 'width:100px' %></p>
+          <%= text_field 'product', :available_on, :style => 'width:100px', :class => 'datepicker' %></p>
 
         <p><label><%= radio_button_tag 'products_action', 'hide' %> <%= t("sim.hide_from_now") %></label></p>
         <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
@@ -62,7 +62,7 @@
                 <td><%= product.price %></td>
                 <td class="has_image"><%= product.images.any? ? image_tag('admin/icons/camera.png', :title => t("sim.has_photo")) : '' %></td>
                 <td class="actions">
-                  <%- form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
+                  <%= form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
                       <% if product.active? %>
                           <%= link_to image_tag('admin/icons/light-bulb.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.published_hide") %>
                       <% else %>
@@ -80,10 +80,10 @@
               </tr>
           <% end %>
         </table>
-        <% form_tag admin_edit_multiple_products_path(@taxon), :id => 'product_ids_form', :method => :put, :style => "display:none" do %>
+        <%= form_tag admin_edit_multiple_products_path(@taxon), :id => 'product_ids_form', :method => :put, :style => "display:none" do %>
         <% end %>
-        <%= will_paginate(@collection, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
-        <% form_tag '', :method => :get, :id => 'per_page_form' do %>
+        <%= paginate(@collection, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+        <%= form_tag '', :method => :get, :id => 'per_page_form' do %>
             <%= label_tag 'per_page', t('sim.per_page') %>
             <%= select_tag 'per_page', options_for_select([["10"], ["50"], ["100"], [t(:all), "10000"]], session[:im_per_page].to_s) %>
         <% end %>
