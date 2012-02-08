@@ -1,10 +1,13 @@
 require 'spree_core'
-require 'synergy_inventory_management_hooks'
 
 module SynergyInventoryManagement
   class Engine < Rails::Engine
 
     config.autoload_paths += %W(#{config.root}/lib)
+
+    initializer :assets do |config|
+      Rails.application.config.assets.precompile += %w( admin/synergy_imi.css )
+    end
 
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|

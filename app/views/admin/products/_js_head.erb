@@ -1,9 +1,9 @@
 <% content_for :head do %>
-    <%= javascript_include_tag 'jquery.cookie.js', 'jsTree/jquery.jstree.js' %>
+    <%#= javascript_include_tag 'jquery.cookie.js', 'jsTree/jquery.jstree.js' %>
     <%= stylesheet_link_tag 'admin/synergy_imi' %>
     <script type="text/javascript">
 
-        var taxonomy_id = '<%= current_taxon.root.taxonomy_id %>';
+        // var taxonomy_id = '3';
         var loading = '<%= escape_javascript t('loading') %>';
         var new_taxon = '<%=escape_javascript t('new_taxon') %>';
         var server_error = '<%=escape_javascript t('server_error') %>';
@@ -108,7 +108,7 @@
                 "core" : { "initially_open" : [ "<%= current_taxon.id %>" ] },
                 "themes" : {
                     "theme" : "apple",
-                    "url" : "/javascripts/jsTree/themes/apple/style.css"
+                    "url" : "/assets/jquery.jstree/themes/apple/style.css"
                 },
                 "strings" : {
                     "new_node" : new_taxon,
@@ -211,18 +211,19 @@
                 "plugins" : [ "themes", "json_data", "html_data", "dnd", "crrm", "contextmenu", "ui"]
             };
 
+
+            $('#taxonomy_tree').jstree().delegate("a", "click", function(event, data) {
+                event.preventDefault();
+                $('#progress').show();
+                window.location.href = this.href
+            });
+
             jQuery("#taxonomy_tree").jstree(conf)
                     .bind("select_node.jstree", handle_select)
                     .bind("move_node.jstree", handle_move)
                     .bind("remove.jstree", handle_delete)
                     .bind("create.jstree", handle_create)
                     .bind("rename.jstree", handle_rename);
-
-
-            $("#taxonomy_tree a").click(function() {
-                $('#progress').show();
-                window.location.href = this.href
-            });
 
 
             jQuery(document).keypress(function(e) {
@@ -244,11 +245,13 @@
             });
 
             $('#products_actions button').click(function() {
+
                 var count = $(".product-select:checked").length;
                 if (!count) {
                     alert('<%= t('sim.select_products') %>');
                     return false;
                 }
+
                 $('.product-select').clone().appendTo('#product_ids_form');
                 switch ($("input[name='products_action']:checked").val()) {
                     case 'publish_from':
@@ -275,6 +278,7 @@
                         alert('<%= t('sim.select_action') %>');
                         return false;
                 }
+
                 $('#actions button').attr("disabled", "true");
                 $('#product_ids_form').submit();
             });
