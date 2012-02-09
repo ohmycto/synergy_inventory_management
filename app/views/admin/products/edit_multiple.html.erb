@@ -34,7 +34,7 @@
       </fieldset>
 
       <div id="products_list">
-        &nbsp;
+        <div style="float:left; width: 50%;" id="current_path"><%= @taxon.self_and_ancestors.map {|tax| link_to tax.name, admin_edit_multiple_products_path(tax) }.join(" > ").html_safe  %></div>
         <div class='toolbar' style="margin-bottom: 10px">
           <ul class='actions'>
             <li id="new_product_link">
