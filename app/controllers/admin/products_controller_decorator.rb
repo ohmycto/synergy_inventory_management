@@ -32,6 +32,7 @@ Admin::ProductsController.class_eval do
   end
 
   def destroy_multiple
+    authorize! :destroy, Product
     @collection.each do |pr|
       pr.update_attributes!(:deleted_at => Time.zone.now)
       pr.variants.each { |v| v.update_attributes!(:deleted_at => Time.zone.now) }
