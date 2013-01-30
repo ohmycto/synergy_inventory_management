@@ -65,9 +65,9 @@
                 <td class="actions">
                   <%- form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
                       <% if product.active? %>
-                          <%= link_to (image_tag('admin/icons/light-bulb.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.published_hide")) %>
+                          <%= link_to(image_tag('admin/icons/light-bulb.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.published_hide")) %>
                       <% else %>
-                          <%= link_to (image_tag('admin/icons/light-bulb-off.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.unpublished_show")) %>
+                          <%= link_to(image_tag('admin/icons/light-bulb-off.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.unpublished_show")) %>
                       <% end %>
                       <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
                   <%- end %>
