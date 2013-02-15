@@ -1,0 +1,2 @@
+$('#product_<%= @object.id%> form a').replaceWith($("<%= escape_javascript @object.active? ? link_to(' ', 'javascript:void(0);', :class => 'change-availability icon-check no-text', :title => t('sim.published_hide')) : link_to(' ', 'javascript:void(0);', :class => 'change-availability icon-check-empty no-text', :title => t('sim.unpublished_show')) %>"));
+$('#product_<%= @object.id%> .product_available_on').val('<%= @object.active? ? '' : Time.zone.now.strftime('%Y/%m/%d') %>');

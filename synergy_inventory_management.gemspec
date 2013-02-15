@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   s.required_ruby_version = '>= 1.8.7'
-  s.add_dependency('spree_core', '>= 0.60.1')
+  s.add_dependency('spree_core', '>= 1.3.0')
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
