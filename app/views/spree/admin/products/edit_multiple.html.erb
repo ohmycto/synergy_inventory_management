@@ -62,7 +62,7 @@
               <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
               <th><%= t("sku") %></th>
               <th><%= sort_link @search, :name, t("name") %></th>
-              <th><%= sort_link @search, :master_price, t("master_price") %></th>
+              <th><%= sort_link @search, :master_default_price_amount, t("master_price") %></th>
               <th><%= t("sim.photo") %></th>
               <th class="actions"></th>
             </tr>
@@ -78,9 +78,9 @@
                 <td class="actions">
                   <%= form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
                       <% if product.active? %>
-                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check no-text', :title => t("sim.published_hide") %>
+                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check no-text', :title => t('sim.published_hide') %>
                       <% else %>
-                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check-empty no-text', :title => t("sim.unpublished_show") %>
+                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check-empty no-text', :title => t('sim.unpublished_show') %>
                       <% end %>
                       <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
                   <%- end %>

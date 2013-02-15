@@ -9,11 +9,11 @@ module Spree
       @taxon = params[:id].present? ? Taxon.find(params[:id]) : Taxon.root
       product_ids = @taxon.present? ? @taxon.self_and_descendants.map { |tax| tax.product_ids }.flatten.uniq : []
 
-      params[:search] ||= {}
-      params[:search][:deleted_at_is_null] = "1" if params[:search][:deleted_at_is_null].nil?
-      params[:search][:meta_sort] ||= "name.asc"
+      params[:q] ||= {}
+      params[:q][:deleted_at_null] = '1' if params[:q][:deleted_at_null].nil?
+      params[:q][:s] ||= 'name asc'
 
-      @search = Product.where(:id => product_ids).search(params[:search])
+      @search = Product.where(:id => product_ids).ransack(params[:q])
      # pagination_options = {:per_page => (session[:im_per_page] || 10), :page => params[:page]}
       @collection = @search.result.group_by_products_id.page(params[:page]).per(session[:im_per_page] || 10)
 
