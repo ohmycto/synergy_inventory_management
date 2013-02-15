@@ -1,23 +1,14 @@
-#synergy_imi {
-  margin: 0 0 20px 0;
-}
-
-#synergy_imi #products_taxons {
-  float: left;
-}
-
 #synergy_imi #taxonomy_tree {
   overflow: auto;
-  width: 200px;  
+  width: 100%;  
 }
 
-#synergy_imi #products_list {
-  margin: 28px 300px 0 250px;
+#synergy_imi #products_actions{
+  margin-bottom: 20px;
 }
-
-#synergy_imi #products_actions {
-  float: right;
-  width: 250px;
+  
+#synergy_imi #current_path{
+  margin-bottom: 15px;
 }
 
 #synergy_imi .pagination {
@@ -39,8 +30,4 @@
 
 #synergy_imi .actions a {
   margin: 0 0 0 5px;
-}
-
-#synergy_imi legend {
-  padding: 0 5px;  
 }

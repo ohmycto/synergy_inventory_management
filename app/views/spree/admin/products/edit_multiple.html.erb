@@ -4,6 +4,12 @@
   <%= t("sim.edit_multiple_products") %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <li id="new_product_link">
+    <%= button_link_to t("sim.new_product_here"), new_object_url("product[add_taxon]" => @taxon.id), {"data-update" => :new_product, :icon => 'icon-plus', :id => 'admin_new_product'} %>
+  </li>
+<% end %>
+
 <div id="synergy_imi">
 
   <div id="new_product"></div>
@@ -11,54 +17,58 @@
   <% if @taxon.present? %>
 
       <%= render :partial => 'js_head', :locals => {:current_taxon => @taxon} %>
-
-      <fieldset id="products_taxons">
-        <legend><%= t("sim.catalog") %></legend>
+      
+      <% content_for :sidebar do %>
+        <div class="sidebar-title">
+          <span><%= t("sim.catalog") %></span>
+        </div>
         <div id='taxonomy_tree' style=" overflow: auto">
           <ul><%= render :partial => "taxon", :collection => Spree::Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
         </div>
-      </fieldset>
+      <% end %>
 
-      <fieldset id="products_actions">
-        <legend><%= t("sim.with_selected") %>:</legend>
-        <p><label><%= radio_button_tag 'products_action', 'publish_from' %> <%= t("sim.publish_from") %></label>
-          <%= text_field 'product', :available_on, :style => 'width:100px', :class => 'datepicker' %></p>
+      <div class="twelve columns">
+        <fieldset id="products_actions">
+          <legend><%= t("sim.with_selected") %>:</legend>
+          <div class="four columns">
+            <p><label><%= radio_button_tag 'products_action', 'publish_from' %> <%= t("sim.publish_from") %></label>
+              <%= text_field 'product', :available_on, :style => 'width:100px', :class => 'datepicker' %></p>
 
-        <p><label><%= radio_button_tag 'products_action', 'hide' %> <%= t("sim.hide_from_now") %></label></p>
-        <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
+            <p><label><%= radio_button_tag 'products_action', 'hide' %> <%= t("sim.hide_from_now") %></label></p>
+            <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
+          </div>
+          <div class="four columns">
+            <p><label><%= radio_button_tag 'products_action', 'add_taxon' %> <%= t("sim.add_taxon") %></label>
+              <% options_for_taxon = [] %>
+              <% Spree::Taxon.each_with_level(Spree::Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
+              <%= select 'product', :add_taxon, raw(options_for_taxon.join) %></p>
 
-        <p><label><%= radio_button_tag 'products_action', 'add_taxon' %> <%= t("sim.add_taxon") %></label>
-          <% options_for_taxon = [] %>
-          <% Spree::Taxon.each_with_level(Spree::Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
-          <%= select 'product', :add_taxon, raw(options_for_taxon.join) %></p>
+            <p><label><%= radio_button_tag 'products_action', 'delete' %> <%= t("sim.delete") %></label></p>
+          </div>
+          <div class="two columns">
+            <%= button t("sim.go") %>
+          </div>
+        </fieldset>
+      </div>
 
-        <p><label><%= radio_button_tag 'products_action', 'delete' %> <%= t("sim.delete") %></label></p>
-        <%= button t("sim.go") %>
-      </fieldset>
+      <div class="clear"></div>
 
-      <div id="products_list">
-        <div style="float:left; width: 50%;" id="current_path"><%= @taxon.self_and_ancestors.map {|tax| link_to tax.name, admin_edit_multiple_products_path(tax) }.join(" > ").html_safe  %></div>
-        &nbsp;
-        <div class='toolbar' style="margin-bottom: 10px">
-          <ul class='actions'>
-            <li id="new_product_link">
-              <%= button_link_to t("sim.new_product_here"), new_object_url("product[add_taxon]" => @taxon.id), {"data-update" => :new_product, :icon => 'add', :id => 'admin_new_product'} %>
-            </li>
-          </ul>
-          <br class='clear'/>
-
-         </div>
+      <div id="products_list" class="twelve columns">
+        <div id="current_path"><%= @taxon.self_and_ancestors.map {|tax| link_to tax.name, admin_edit_multiple_products_path(tax) }.join(" > ").html_safe  %></div>
 
         <table class="index" id="listing_products">
-          <tr>
-            <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
-            <th><%= t("sku") %></th>
-            <th><%= sort_link @search, :name, t("name") %></th>
-            <th><%= sort_link @search, :master_price, t("master_price") %></th>
-            <th><%= t("sim.photo") %></th>
-            <th></th>
-          </tr>
-          <% @collection.each do |product| %>
+          <thead>
+            <tr>
+              <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
+              <th><%= t("sku") %></th>
+              <th><%= sort_link @search, :name, t("name") %></th>
+              <th><%= sort_link @search, :master_price, t("master_price") %></th>
+              <th><%= t("sim.photo") %></th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @collection.each do |product| %>
               <tr id="<%= dom_id product %>">
                 <td><%= check_box_tag 'product_ids[]', product.id, false, :class => 'product-select' %></td>
                 <td><%= product.sku %></td>
@@ -79,10 +89,10 @@
                   <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product), :title => t(:clone)) unless product.deleted? %>
                   <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy'), :title => t(:delete)) unless product.deleted? %>
                   <%= link_to(image_tag('admin/icons/search.gif'), product, :title => t("preview"), :target => "_blank") unless product.deleted? %>
-
                 </td>
               </tr>
-          <% end %>
+            <% end %>
+          </tbody>
         </table>
         <%= form_tag admin_edit_multiple_products_path(@taxon), :id => 'product_ids_form', :method => :put, :style => "display:none" do %>
         <% end %>
