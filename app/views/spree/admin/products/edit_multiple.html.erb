@@ -1,7 +1,10 @@
-<%= render :partial => 'admin/shared/product_sub_menu' %>
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
+<% content_for :page_title do %>
+  <%= t("sim.edit_multiple_products") %>
+<% end %>
 
 <div id="synergy_imi">
-  <h1><%= t("sim.edit_multiple_products") %></h1>
 
   <div id="new_product"></div>
   <p id="ajax_error" class="errorExplanation" style="display:none;"></p>
@@ -12,7 +15,7 @@
       <fieldset id="products_taxons">
         <legend><%= t("sim.catalog") %></legend>
         <div id='taxonomy_tree' style=" overflow: auto">
-          <ul><%= render :partial => "taxon", :collection => Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
+          <ul><%= render :partial => "taxon", :collection => Spree::Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
         </div>
       </fieldset>
 
@@ -26,7 +29,7 @@
 
         <p><label><%= radio_button_tag 'products_action', 'add_taxon' %> <%= t("sim.add_taxon") %></label>
           <% options_for_taxon = [] %>
-          <% Taxon.each_with_level(Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
+          <% Spree::Taxon.each_with_level(Spree::Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
           <%= select 'product', :add_taxon, raw(options_for_taxon.join) %></p>
 
         <p><label><%= radio_button_tag 'products_action', 'delete' %> <%= t("sim.delete") %></label></p>
