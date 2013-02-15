@@ -78,17 +78,18 @@
                 <td class="actions">
                   <%= form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
                       <% if product.active? %>
-                          <%= link_to image_tag('admin/icons/light-bulb.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.published_hide") %>
+                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check no-text', :title => t("sim.published_hide") %>
                       <% else %>
-                          <%= link_to image_tag('admin/icons/light-bulb-off.png'), 'javascript:void(0);', :class => 'change-availability', :title => t("sim.unpublished_show") %>
+                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check-empty no-text', :title => t("sim.unpublished_show") %>
                       <% end %>
                       <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
                   <%- end %>
-
-                  <%= link_to(image_tag('admin/icons/edit.png'), edit_admin_product_path(product), :title => t(:edit)) unless product.deleted? %>
-                  <%= link_to(image_tag('admin/icons/exclamation.png'), clone_admin_product_path(product), :title => t(:clone)) unless product.deleted? %>
-                  <%= link_to(image_tag('admin/icons/delete.png'), admin_product_path(product), :method => :delete, :confirm => t('sim.confirm_destroy'), :title => t(:delete)) unless product.deleted? %>
-                  <%= link_to(image_tag('admin/icons/search.gif'), product, :title => t("preview"), :target => "_blank") unless product.deleted? %>
+                  <% unless product.deleted? %>
+                    <%= link_to_edit product, :no_text => true %>
+                    <%= link_to_clone product, :no_text => true %>
+                    <%= link_to_delete product, :no_text => true %>
+                    <%= link_to_with_icon 'icon-search', t("preview"), product, :no_text => true, :target => "_blank" %>
+                  <% end %>
                 </td>
               </tr>
             <% end %>
