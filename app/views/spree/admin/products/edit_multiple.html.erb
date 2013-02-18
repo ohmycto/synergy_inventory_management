@@ -1,0 +1,115 @@
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
+<% content_for :page_title do %>
+  <%= t("sim.edit_multiple_products") %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li id="new_product_link">
+    <%= button_link_to t("sim.new_product_here"), new_object_url("product[add_taxon]" => @taxon.id), {"data-update" => :new_product, :icon => 'icon-plus', :id => 'admin_new_product'} %>
+  </li>
+<% end %>
+
+<div id="synergy_imi">
+
+  <div id="new_product"></div>
+  <p id="ajax_error" class="errorExplanation" style="display:none;"></p>
+  <% if @taxon.present? %>
+
+      <%= render :partial => 'js_head', :locals => {:current_taxon => @taxon} %>
+      
+      <% content_for :sidebar do %>
+        <div class="sidebar-title">
+          <span><%= t("sim.catalog") %></span>
+        </div>
+        <div id='taxonomy_tree' style=" overflow: auto">
+          <ul><%= render :partial => "taxon", :collection => Spree::Taxon.roots, :locals => {:current_taxon => @taxon} %></ul>
+        </div>
+      <% end %>
+
+      <div class="twelve columns">
+        <fieldset id="products_actions">
+          <legend><%= t("sim.with_selected") %>:</legend>
+          <div class="four columns">
+            <p><label><%= radio_button_tag 'products_action', 'publish_from' %> <%= t("sim.publish_from") %></label>
+              <%= text_field 'product', :available_on, :style => 'width:100px', :class => 'datepicker' %></p>
+
+            <p><label><%= radio_button_tag 'products_action', 'hide' %> <%= t("sim.hide_from_now") %></label></p>
+            <%= hidden_field 'product', :available_on, :id => 'product_hide' %>
+          </div>
+          <div class="four columns">
+            <p><label><%= radio_button_tag 'products_action', 'add_taxon' %> <%= t("sim.add_taxon") %></label>
+              <% options_for_taxon = [] %>
+              <% Spree::Taxon.each_with_level(Spree::Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
+              <%= select 'product', :add_taxon, raw(options_for_taxon.join) %></p>
+
+            <p><label><%= radio_button_tag 'products_action', 'delete' %> <%= t("sim.delete") %></label></p>
+          </div>
+          <div class="two columns">
+            <%= button t("sim.go") %>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="clear"></div>
+
+      <div id="products_list" class="twelve columns">
+        <div id="current_path"><%= @taxon.self_and_ancestors.map {|tax| link_to tax.name, admin_edit_multiple_products_path(tax) }.join(" > ").html_safe  %></div>
+
+        <table class="index" id="listing_products">
+          <thead>
+            <tr>
+              <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
+              <th><%= t("sku") %></th>
+              <th><%= sort_link @search, :name, t("name") %></th>
+              <th><%= sort_link @search, :master_default_price_amount, t("master_price") %></th>
+              <th><%= t("sim.photo") %></th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @collection.each do |product| %>
+              <tr id="<%= dom_id product %>">
+                <td><%= check_box_tag 'product_ids[]', product.id, false, :class => 'product-select' %></td>
+                <td><%= product.sku %></td>
+                <td><%= product.name %></td>
+                <td><%= product.price %></td>
+                <td class="has_image"><%= product.images.any? ? image_tag('admin/icons/camera.png', :title => t("sim.has_photo")) : '' %></td>
+                <td class="actions">
+                  <%= form_for product, :url => admin_product_path(product), :remote => true, :html => {:style => 'display:inline'} do |f| %>
+                      <% if product.active? %>
+                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check no-text', :title => t('sim.published_hide') %>
+                      <% else %>
+                          <%= link_to ' ', 'javascript:void(0);', :class => 'change-availability icon-check-empty no-text', :title => t('sim.unpublished_show') %>
+                      <% end %>
+                      <%= f.hidden_field :available_on, :class => 'product_available_on', :value => (product.active? ? '' : Time.zone.now.strftime('%Y/%m/%d')) %>
+                  <%- end %>
+                  <% unless product.deleted? %>
+                    <%= link_to_edit product, :no_text => true %>
+                    <%= link_to_clone product, :no_text => true %>
+                    <%= link_to_delete product, :no_text => true %>
+                    <%= link_to_with_icon 'icon-search', t("preview"), product, :no_text => true, :target => "_blank" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= form_tag admin_edit_multiple_products_path(@taxon), :id => 'product_ids_form', :method => :put, :style => "display:none" do %>
+        <% end %>
+        <%= paginate(@collection, :previous_label => "&#171; #{t('previous')}", :next_label => "#{t('next')} &#187;") %>
+        <%= form_tag '', :method => :get, :id => 'per_page_form' do %>
+            <%= label_tag 'per_page', t('sim.per_page') %>
+            <%= select_tag 'per_page', options_for_select([["10"], ["50"], ["100"], [t(:all), "10000"]], session[:im_per_page].to_s) %>
+        <% end %>
+      </div>
+  <% else %>
+      <p><%= t('sim.requires_at_least_one_taxon') %></p>
+  <% end %>
+</div>
+
+
+
+
+
+
