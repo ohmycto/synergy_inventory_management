@@ -15,9 +15,9 @@ Bundle up with:
 
     bundle install
     
-Run the rake task that copies the assets to your project:
+Run the rake task that adds the assets to your project:
 
-    rake synergy_inventory_management:install
+    rails g synergy_inventory_management:install
        
 Now you should be able to boot up your server with:
 
