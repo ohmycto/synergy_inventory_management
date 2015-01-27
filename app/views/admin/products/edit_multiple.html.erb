@@ -29,6 +29,11 @@
           <% Taxon.each_with_level(Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
           <%= select 'product', :add_taxon, raw(options_for_taxon.join) %></p>
 
+        <p><label><%= radio_button_tag 'products_action', 'delete_taxon' %> <%= t("sim.delete_taxon") %></label>
+          <% options_for_taxon = [] %>
+          <% Taxon.each_with_level(Taxon.roots.map{ |root|root.self_and_descendants}.flatten) { |tax, level| options_for_taxon << "<option value='#{tax.id}'>#{'-' * level}#{tax.name}</option>" } %>
+          <%= select 'product', :delete_taxon, raw(options_for_taxon.join) %></p>
+
         <p><label><%= radio_button_tag 'products_action', 'delete' %> <%= t("sim.delete") %></label></p>
         <%= button t("sim.go") %>
       </fieldset>

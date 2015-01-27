@@ -264,6 +264,13 @@
                             value: $('#product_add_taxon').val()
                         }).appendTo('#product_ids_form');
                         break;
+                    case 'delete_taxon':
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'product[delete_taxon]',
+                            value: $('#product_delete_taxon').val()
+                        }).appendTo('#product_ids_form');
+                        break;
                     case 'delete':
                         var del = confirm("<%= t('sim.confirm_destroy') %>");
                         if (!del) {
