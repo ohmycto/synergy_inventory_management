@@ -22,4 +22,6 @@ en:
     products_actions: "Actions"
     published_hide: "Published (hide on click)"
     unpublished_show: "Unpublished (show by click)"
+    move_higher: 'Move higher'
+    move_lower: 'Move lower'
 

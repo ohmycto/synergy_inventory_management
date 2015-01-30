@@ -5,5 +5,6 @@ Rails.application.routes.draw do
     match 'edit_multiple_products/:id' => "products#update_multiple", :via => :put
     match 'edit_multiple_products/:id' => "products#destroy_multiple", :via => :delete
     match 'switch_product_availability/:id' => "products#switch_availability", :via => :put, :as => :switch_product_availability
+    match 'update_product_position' => "product_positions#update", :via => :get
   end
 end

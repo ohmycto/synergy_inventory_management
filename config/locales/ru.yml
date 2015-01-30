@@ -23,4 +23,6 @@ ru:
     products_actions: "Действия"
     published_hide: "Опубликовано (по нажатию - скрыть)"
     unpublished_show: "Не опубликовано (по нажатию - опубликовать)"
+    move_higher: 'Поднять выше'
+    move_lower: 'Опустить ниже'
 

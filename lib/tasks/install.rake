@@ -20,6 +20,19 @@ namespace :synergy_inventory_management do
       puts "INFO: Mirroring assets from #{source} to #{destination}"
       Spree::FileUtilz.mirror_files(source, destination)
     end
+
+    desc "Initialize products positions"
+    task :product_positions => :environment do
+      Taxon.find_each do |taxon|
+        taxon.products.find_each do |product|
+          if (product_position = product.find_position_by_taxon(taxon.id)).present?
+            product_position.move_to_bottom
+          else
+            product.product_positions.create(:taxon_id => taxon.id).move_to_bottom 
+          end
+        end
+      end
+    end
   end
 
 end

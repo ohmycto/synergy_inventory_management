@@ -54,6 +54,7 @@
         <table class="index" id="listing_products">
           <tr>
             <th><%= check_box_tag 'check-all', 1, false, :id => 'check-all' %></th>
+            <th></th>
             <th><%= t("sku") %></th>
             <th><%= sort_link @search, :name, t("name") %></th>
             <th><%= sort_link @search, :master_price, t("master_price") %></th>
@@ -63,6 +64,10 @@
           <% @collection.each do |product| %>
               <tr id="<%= dom_id product %>">
                 <td><%= check_box_tag 'product_ids[]', product.id, false, :class => 'product-select' %></td>
+                <td>
+                  <%= link_to '&#8657;'.html_safe, admin_update_product_position_path(:product_id => product.id, :taxon_id => @taxon.id, :position => 'up'), :title => t('sim.move_higher') %>
+                  <%= link_to '&#8659;'.html_safe, admin_update_product_position_path(:product_id => product.id, :taxon_id => @taxon.id, :position => 'down'), :title => t('sim.move_lower') %>
+                </td>
                 <td><%= product.sku %></td>
                 <td><%= product.name %></td>
                 <td><%= product.price %></td>

@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.required_ruby_version = '>= 1.8.7'
   s.add_dependency('spree_core', '>= 0.60.1')
+  s.add_dependency('acts_as_list')
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
