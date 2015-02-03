@@ -31,7 +31,7 @@ Product.class_eval do
     def update_product_positions
       self.taxons.each do |taxon|
         unless (product_position = self.find_position_by_taxon(taxon.id)).present?
-          position = product.product_positions.create(:taxon_id => taxon.id)
+          position = self.product_positions.create(:taxon_id => taxon.id)
           position.move_to_bottom 
         end
       end
